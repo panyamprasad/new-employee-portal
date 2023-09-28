@@ -1,0 +1,91 @@
+service: new-employee-portal-app
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: employee-portal
+  region: us-east-1
+  environment:
+    DYNAMODB_TABLE_NAME: ${self:custom.employeeTableName}
+  custom:
+    employeeTableName: employee-table-${self:provider.stage}
+  plugins:
+    -serverless-iam-roles-per-function
+  functions:
+    #Create Experience Details      
+    createExperienceInfo:
+      handler: api.createExperienceInfo
+      name: create-post
+      memorySize: 128
+      timeout: 5
+      events:
+        - http:
+            path: jobExperienceInfo
+            method: POST
+      iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:CreateItem"
+          Resource: !GetAtt PostsTable.Arn
+
+    #Update Experience Details
+    updateExperienceInfo:
+      handler: api.updateExperienceInfo
+      name: update-post
+      memorySize: 128 # mb
+      timeout: 5 # seconds
+      events:
+        - http:
+            path: experienceInfo/{employeeId}
+            method: PUT
+      iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:UpdateItem"
+          Resource: !GetAtt PostsTable.Arn
+
+    #Get Experience Details Based on EmpID
+    getExperienceInfo:
+      handler: api.getExperienceInfo
+      name: get-post
+      memorySize: 128
+      timeout: 5
+      events:
+        - http:
+            path: experienceInfo/{employeeId}
+            method: GET
+      iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:GetItem"
+          Resource: !GetAtt PostsTable.Arn
+    
+    #Get All Experience Details Based on EmpID
+    getAllExperienceInfo:
+      handler: api.getAllExperienceInfo
+      name: get-post
+      memorySize: 128
+      timeout: 5
+      events:
+        - http:
+            path: experienceInfo/{employeeId}
+            method: GET
+      iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:GetItem"
+          Resource: !GetAtt PostsTable.Arn
+resources:
+  Resources:
+    PostsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.employeeTableName}
+        AttributeDefinitions:
+          - AttributeName: postId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: postId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
