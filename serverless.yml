@@ -25,7 +25,10 @@ provider:
         - Effect: "Allow"
           Action:
             - "dynamodb:CreateItem"
-          Resource: !GetAtt PostsTable.Arn
+          Resource:
+            Fn::GetAtt:
+              - PostsTable
+              - Arn
 
     #Update Experience Details
     updateExperienceInfo:
@@ -41,7 +44,10 @@ provider:
         - Effect: "Allow"
           Action:
             - "dynamodb:UpdateItem"
-          Resource: !GetAtt PostsTable.Arn
+          Resource:
+            Fn::GetAtt:
+              - PostsTable
+              - Arn
 
     #Get Experience Details Based on EmpID
     getExperienceInfo:
@@ -57,7 +63,10 @@ provider:
         - Effect: "Allow"
           Action:
             - "dynamodb:GetItem"
-          Resource: !GetAtt PostsTable.Arn
+          Resource:
+            Fn::GetAtt:
+              - PostsTable
+              - Arn
     
     #Get All Experience Details Based on EmpID
     getAllExperienceInfo:
@@ -73,7 +82,10 @@ provider:
         - Effect: "Allow"
           Action:
             - "dynamodb:GetItem"
-          Resource: !GetAtt PostsTable.Arn
+          Resource:
+            Fn::GetAtt:
+              - PostsTable
+              - Arn
 resources:
   Resources:
     PostsTable:
