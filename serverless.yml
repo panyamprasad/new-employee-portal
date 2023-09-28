@@ -13,7 +13,7 @@ plugins:
 functions:
     #Create Experience Details      
   createPost:
-    handler: api.createPost
+    handler: api.createExperienceInfo
     name: create-post
     memorySize: 128
     timeout: 5
@@ -32,7 +32,7 @@ functions:
 
     #Update Experience Details
   updatePost:
-    handler: api.updatePost
+    handler: api.updateExperienceInfo
     name: update-post
     memorySize: 128 # mb
     timeout: 5 # seconds
@@ -51,7 +51,7 @@ functions:
 
   #Get Experience Details Based on EmpID
   getPost:
-    handler: api.getPost
+    handler: api.getExperienceInfo
     name: get-post
     memorySize: 128
     timeout: 5
@@ -70,7 +70,7 @@ functions:
   
   #Get All Experience Details Based on EmpID
   getAllPost:
-    handler: api.getAllPost
+    handler: api.getAllExperienceInfo
     name: get-post
     memorySize: 128
     timeout: 5
