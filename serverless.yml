@@ -6,86 +6,86 @@ provider:
   region: us-east-1
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.employeeTableName}
-  custom:
-    employeeTableName: employee-table-${self:provider.stage}
-  plugins:
-    -serverless-iam-roles-per-function
-  functions:
+custom:
+  employeeTableName: employee-table-${self:provider.stage}
+plugins:
+  - serverless-iam-roles-per-function
+functions:
     #Create Experience Details      
-    createPost:
-      handler: api.createPost
-      name: create-post
-      memorySize: 128
-      timeout: 5
-      events:
-        - http:
-            path: jobExperienceInfo
-            method: POST
-      iamRoleStatements:
-        - Effect: "Allow"
-          Action:
-            - "dynamodb:CreateItem"
-          Resource:
-            Fn::GetAtt:
-              - PostsTable
-              - Arn
+  createPost:
+    handler: api.createPost
+    name: create-post
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: jobExperienceInfo
+          method: POST
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:CreateItem"
+        Resource:
+          Fn::GetAtt:
+            - PostsTable
+            - Arn
 
     #Update Experience Details
-    updatePost:
-      handler: api.updatePost
-      name: update-post
-      memorySize: 128 # mb
-      timeout: 5 # seconds
-      events:
-        - http:
-            path: experienceInfo/{employeeId}
-            method: PUT
-      iamRoleStatements:
-        - Effect: "Allow"
-          Action:
-            - "dynamodb:UpdateItem"
-          Resource:
-            Fn::GetAtt:
-              - PostsTable
-              - Arn
+  updatePost:
+    handler: api.updatePost
+    name: update-post
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: experienceInfo/{employeeId}
+          method: PUT
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:UpdateItem"
+        Resource:
+          Fn::GetAtt:
+            - PostsTable
+            - Arn
 
-    #Get Experience Details Based on EmpID
-    getPost:
-      handler: api.getPost
-      name: get-post
-      memorySize: 128
-      timeout: 5
-      events:
-        - http:
-            path: experienceInfo/{employeeId}
-            method: GET
-      iamRoleStatements:
-        - Effect: "Allow"
-          Action:
-            - "dynamodb:GetItem"
-          Resource:
-            Fn::GetAtt:
-              - PostsTable
-              - Arn
-    
-    #Get All Experience Details Based on EmpID
-    getAllPost:
-      handler: api.getAllPost
-      name: get-post
-      memorySize: 128
-      timeout: 5
-      events:
-        - http:
-            path: experienceInfo/{employeeId}
-            method: GET
-      iamRoleStatements:
-        - Effect: "Allow"
-          Action:
-            - "dynamodb:GetItem"
-          Resource:
-            Fn::GetAtt:
-              - PostsTable
-              - Arn
+  #Get Experience Details Based on EmpID
+  getPost:
+    handler: api.getPost
+    name: get-post
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: experienceInfo/{employeeId}
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource:
+          Fn::GetAtt:
+            - PostsTable
+            - Arn
+  
+  #Get All Experience Details Based on EmpID
+  getAllPost:
+    handler: api.getAllPost
+    name: get-post
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: experienceInfo/{employeeId}
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource:
+          Fn::GetAtt:
+            - PostsTable
+            - Arn
 resources:
   Resources:
     PostsTable:
