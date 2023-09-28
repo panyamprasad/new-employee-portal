@@ -71,7 +71,7 @@ functions:
   #Get All Experience Details Based on EmpID
   getAllPost:
     handler: api.getAllExperienceInfo
-    name: get-post
+    name: get-all-post
     memorySize: 128
     timeout: 5
     events:
