@@ -2,7 +2,7 @@ service: new-employee-portal-app
 provider:
   name: aws
   runtime: nodejs18.x
-  stage: employee-portal
+  stage: employeePortal
   region: us-east-1
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.employeeTableName}
@@ -12,8 +12,8 @@ provider:
     -serverless-iam-roles-per-function
   functions:
     #Create Experience Details      
-    createExperienceInfo:
-      handler: api.createExperienceInfo
+    createPost:
+      handler: api.createPost
       name: create-post
       memorySize: 128
       timeout: 5
@@ -31,8 +31,8 @@ provider:
               - Arn
 
     #Update Experience Details
-    updateExperienceInfo:
-      handler: api.updateExperienceInfo
+    updatePost:
+      handler: api.updatePost
       name: update-post
       memorySize: 128 # mb
       timeout: 5 # seconds
@@ -50,8 +50,8 @@ provider:
               - Arn
 
     #Get Experience Details Based on EmpID
-    getExperienceInfo:
-      handler: api.getExperienceInfo
+    getPost:
+      handler: api.getPost
       name: get-post
       memorySize: 128
       timeout: 5
@@ -69,8 +69,8 @@ provider:
               - Arn
     
     #Get All Experience Details Based on EmpID
-    getAllExperienceInfo:
-      handler: api.getAllExperienceInfo
+    getAllPost:
+      handler: api.getAllPost
       name: get-post
       memorySize: 128
       timeout: 5
