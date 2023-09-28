@@ -19,7 +19,7 @@ functions:
     timeout: 5
     events:
       - http:
-          path: jobExperienceInfo
+          path: experienceInfo
           method: POST
     iamRoleStatements:
       - Effect: "Allow"
@@ -57,7 +57,7 @@ functions:
     timeout: 5
     events:
       - http:
-          path: experienceInfo/{employeeId}
+          path: employeeExperienceInfo/{employeeId}
           method: GET
     iamRoleStatements:
       - Effect: "Allow"
@@ -76,7 +76,7 @@ functions:
     timeout: 5
     events:
       - http:
-          path: experienceInfo/{employeeId}
+          path: employeesExperienceInfo
           method: GET
     iamRoleStatements:
       - Effect: "Allow"
