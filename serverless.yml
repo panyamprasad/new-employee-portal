@@ -13,7 +13,7 @@ plugins:
 functions:
     #Create Experience Details      
   createPost:
-    handler: api.createPost
+    handler: api.createExperience
     name: create-post
     memorySize: 128
     timeout: 5
@@ -24,7 +24,7 @@ functions:
     iamRoleStatements:
       - Effect: "Allow"
         Action:
-          - "dynamodb:CreateItem"
+          - "dynamodb:PutItem"
         Resource:
           Fn::GetAtt:
             - PostsTable
@@ -32,7 +32,7 @@ functions:
 
     #Update Experience Details
   updatePost:
-    handler: api.updatePost
+    handler: api.updateExperience
     name: update-post
     memorySize: 128 # mb
     timeout: 5 # seconds
@@ -51,7 +51,7 @@ functions:
 
   #Get Experience Details Based on EmpID
   getPost:
-    handler: api.getPost
+    handler: api.getExperience
     name: get-post
     memorySize: 128
     timeout: 5
@@ -70,7 +70,7 @@ functions:
   
   #Get All Experience Details Based on EmpID
   getAllPost:
-    handler: api.getAllPosts
+    handler: api.getAllExperience
     name: get-all-post
     memorySize: 128
     timeout: 5
@@ -81,7 +81,7 @@ functions:
     iamRoleStatements:
       - Effect: "Allow"
         Action:
-          - "dynamodb:GetItem"
+          - "dynamodb:Scan"
         Resource:
           Fn::GetAtt:
             - PostsTable
@@ -93,10 +93,10 @@ resources:
       Properties:
         TableName: ${self:custom.employeeTableName}
         AttributeDefinitions:
-          - AttributeName: postId
+          - AttributeName: EmpId
             AttributeType: S
         KeySchema:
-          - AttributeName: postId
+          - AttributeName: EmpId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
