@@ -11,7 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.415.0",
     "@aws-sdk/util-dynamodb": "^3.415.0",
-    "aws-sdk": "^2.1461.0",
+    "aws-sdk": "^2.1470.0",
     "serverless-iam-roles-per-function": "^3.2.0"
   }
 }

@@ -38,7 +38,7 @@ functions:
     timeout: 5 # seconds
     events:
       - http:
-          path: experienceInfo/{employeeId}
+          path: experienceInfo/{empId}
           method: PUT
     iamRoleStatements:
       - Effect: "Allow"
@@ -50,42 +50,42 @@ functions:
             - Arn
 
   #Get Experience Details Based on EmpID
-  getPost:
-    handler: api.getExperienceInfo
-    name: get-post
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: employeeExperienceInfo/{employeeId}
-          method: GET
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:GetItem"
-        Resource:
-          Fn::GetAtt:
-            - PostsTable
-            - Arn
+  # getPost:
+  #   handler: api.getExperienceInfo
+  #   name: get-post
+  #   memorySize: 128
+  #   timeout: 5
+  #   events:
+  #     - http:
+  #         path: employeeExperienceInfo/{employeeId}
+  #         method: GET
+  #   iamRoleStatements:
+  #     - Effect: "Allow"
+  #       Action:
+  #         - "dynamodb:GetItem"
+  #       Resource:
+  #         Fn::GetAtt:
+  #           - PostsTable
+  #           - Arn
   
-  #Get All Experience Details Based on EmpID
-  getAllPost:
-    handler: api.getAllExperienceInfo
-    name: get-all-post
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: employeesExperienceInfo
-          method: GET
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:GetItem"
-        Resource:
-          Fn::GetAtt:
-            - PostsTable
-            - Arn
+  # #Get All Experience Details Based on EmpID
+  # getAllPost:
+  #   handler: api.getAllExperienceInfo
+  #   name: get-all-post
+  #   memorySize: 128
+  #   timeout: 5
+  #   events:
+  #     - http:
+  #         path: employeesExperienceInfo
+  #         method: GET
+  #   iamRoleStatements:
+  #     - Effect: "Allow"
+  #       Action:
+  #         - "dynamodb:GetItem"
+  #       Resource:
+  #         Fn::GetAtt:
+  #           - PostsTable
+  #           - Arn
 resources:
   Resources:
     PostsTable:
@@ -93,10 +93,10 @@ resources:
       Properties:
         TableName: ${self:custom.employeeTableName}
         AttributeDefinitions:
-          - AttributeName: postId
+          - AttributeName: empId
             AttributeType: S
         KeySchema:
-          - AttributeName: postId
+          - AttributeName: empId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
