@@ -72,45 +72,45 @@ module.exports.updateExperience = async (event) => {
 };
 
 // Get Experience Details
-module.exports.getExperience = async (event) => {
-  const employeeId = event.pathParameters.employeeId;
+// module.exports.getExperience = async (event) => {
+//   const employeeId = event.pathParameters.employeeId;
 
-  const params = {
-    TableName: process.env.DYNAMODB_TABLE_NAME,
-    Key: { EmpId: employeeId },
-  };
+//   const params = {
+//     TableName: process.env.DYNAMODB_TABLE_NAME,
+//     Key: { EmpId: employeeId },
+//   };
 
-  try {
-    const result = await dynamoDb.get(params).promise();
-    return {
-      statusCode: 200,
-      body: JSON.stringify(result.Item),
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'An error occurred while getting experience details' }),
-    };
-  }
-};
+//   try {
+//     const result = await dynamoDb.get(params).promise();
+//     return {
+//       statusCode: 200,
+//       body: JSON.stringify(result.Item),
+//     };
+//   } catch (error) {
+//     return {
+//       statusCode: 500,
+//       body: JSON.stringify({ error: 'An error occurred while getting experience details' }),
+//     };
+//   }
+// };
 
-// Get All Experience Details
-module.exports.getAllExperience = async () => {
-  const params = {
-    TableName: process.env.DYNAMODB_TABLE_NAME,
-  };
+// // Get All Experience Details
+// module.exports.getAllExperience = async () => {
+//   const params = {
+//     TableName: process.env.DYNAMODB_TABLE_NAME,
+//   };
 
-  try {
-    const result = await dynamoDb.scan(params).promise();
-    const items = result.Items.map((item) => DynamoDB.Converter.unmarshall(item));
-    return {
-      statusCode: 200,
-      body: JSON.stringify(items),
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'An error occurred while fetching all experience details' }),
-    };
-  }
-};
+//   try {
+//     const result = await dynamoDb.scan(params).promise();
+//     const items = result.Items.map((item) => DynamoDB.Converter.unmarshall(item));
+//     return {
+//       statusCode: 200,
+//       body: JSON.stringify(items),
+//     };
+//   } catch (error) {
+//     return {
+//       statusCode: 500,
+//       body: JSON.stringify({ error: 'An error occurred while fetching all experience details' }),
+//     };
+//   }
+// };
