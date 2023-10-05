@@ -4,6 +4,24 @@ const dynamoDb = new DynamoDB.DocumentClient();
 // Create Experience Details
 module.exports.createExperience = async (event) => {
   const requestBody = JSON.parse(event.body);
+  // Validate StartDate and EndDate
+  if (new Date(requestBody.StartDate) >= new Date(requestBody.EndDate)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'EndDate must be after StartDate' }),
+    };
+  }
+  // Validate CreatedDateTime and UpdatedDateTime format
+  const isValidTimestamp = (timestamp) => {
+    return !isNaN(Date.parse(timestamp));
+  };
+
+  if (!isValidTimestamp(requestBody.CreatedDateTime) || !isValidTimestamp(requestBody.UpdatedDateTime)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid timestamp format for CreatedDateTime or UpdatedDateTime' }),
+    };
+  }
 
   const params = {
     TableName: process.env.DYNAMODB_TABLE_NAME,
@@ -17,6 +35,8 @@ module.exports.createExperience = async (event) => {
       Responsibilities: requestBody.Responsibilities,
       TechnologiesWorked: requestBody.TechnologiesWorked,
       IsActive: requestBody.IsActive,
+      CreatedDateTime: requestBody.CreatedDateTime,
+      UpdatedDateTime: requestBody.UpdatedDateTime,
     },
   };
 
