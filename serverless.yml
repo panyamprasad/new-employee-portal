@@ -13,7 +13,7 @@ plugins:
 functions:
     #Create Experience Details      
   createPost:
-    handler: api.createExperienceInfo
+    handler: api.createPost
     name: create-post
     memorySize: 128
     timeout: 5
@@ -32,13 +32,13 @@ functions:
 
     #Update Experience Details
   updatePost:
-    handler: api.updateExperienceInfo
+    handler: api.updatePost
     name: update-post
     memorySize: 128 # mb
     timeout: 5 # seconds
     events:
       - http:
-          path: experienceInfo/{empId}
+          path: experienceInfo/{employeeId}
           method: PUT
     iamRoleStatements:
       - Effect: "Allow"
@@ -50,42 +50,42 @@ functions:
             - Arn
 
   #Get Experience Details Based on EmpID
-  # getPost:
-  #   handler: api.getExperienceInfo
-  #   name: get-post
-  #   memorySize: 128
-  #   timeout: 5
-  #   events:
-  #     - http:
-  #         path: employeeExperienceInfo/{employeeId}
-  #         method: GET
-  #   iamRoleStatements:
-  #     - Effect: "Allow"
-  #       Action:
-  #         - "dynamodb:GetItem"
-  #       Resource:
-  #         Fn::GetAtt:
-  #           - PostsTable
-  #           - Arn
+  getPost:
+    handler: api.getPost
+    name: get-post
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: employeeExperienceInfo/{employeeId}
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource:
+          Fn::GetAtt:
+            - PostsTable
+            - Arn
   
-  # #Get All Experience Details Based on EmpID
-  # getAllPost:
-  #   handler: api.getAllExperienceInfo
-  #   name: get-all-post
-  #   memorySize: 128
-  #   timeout: 5
-  #   events:
-  #     - http:
-  #         path: employeesExperienceInfo
-  #         method: GET
-  #   iamRoleStatements:
-  #     - Effect: "Allow"
-  #       Action:
-  #         - "dynamodb:GetItem"
-  #       Resource:
-  #         Fn::GetAtt:
-  #           - PostsTable
-  #           - Arn
+  #Get All Experience Details Based on EmpID
+  getAllPost:
+    handler: api.getAllPosts
+    name: get-all-post
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: employeesExperienceInfo
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource:
+          Fn::GetAtt:
+            - PostsTable
+            - Arn
 resources:
   Resources:
     PostsTable:
@@ -93,10 +93,10 @@ resources:
       Properties:
         TableName: ${self:custom.employeeTableName}
         AttributeDefinitions:
-          - AttributeName: empId
+          - AttributeName: postId
             AttributeType: S
         KeySchema:
-          - AttributeName: empId
+          - AttributeName: postId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
