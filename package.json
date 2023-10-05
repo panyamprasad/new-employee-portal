@@ -13,5 +13,9 @@
     "@aws-sdk/util-dynamodb": "^3.415.0",
     "aws-sdk": "^2.1470.0",
     "serverless-iam-roles-per-function": "^3.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0"
   }
 }

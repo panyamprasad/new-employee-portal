@@ -4,6 +4,13 @@ const dynamoDb = new DynamoDB.DocumentClient();
 // Create Experience Details
 module.exports.createExperience = async (event) => {
   const requestBody = JSON.parse(event.body);
+  // Validate StartDate and EndDate
+  if (new Date(requestBody.StartDate) >= new Date(requestBody.EndDate)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'EndDate must be after StartDate' }),
+    };
+  }
 
   const params = {
     TableName: process.env.DYNAMODB_TABLE_NAME,
