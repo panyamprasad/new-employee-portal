@@ -110,14 +110,19 @@ module.exports.getAllExperience = async () => {
   try {
     const result = await dynamoDb.scan(params).promise();
     const items = result.Items.map((item) => DynamoDB.Converter.unmarshall(item));
+
+    console.log('Retrieved items:', items); // Log the retrieved items for debugging
+
     return {
       statusCode: 200,
       body: JSON.stringify(items),
     };
   } catch (error) {
+    console.error('Error fetching experience details:', error); // Log the error for debugging
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'An error occurred while fetching all experience details' }),
+      body: JSON.stringify({ error: 'An error occurred while fetching experience details' }),
     };
   }
 };
+
