@@ -111,7 +111,7 @@ module.exports.getAllExperience = async () => {
     const result = await dynamoDb.scan(params).promise();
     const items = result.Items.map((item) => DynamoDB.Converter.unmarshall(item));
 
-    console.log('Retrieved items:', items); // Log the retrieved items for debugging
+    console.log('Retrieved items:', result.Items); // Log the retrieved items for debugging
 
     return {
       statusCode: 200,
