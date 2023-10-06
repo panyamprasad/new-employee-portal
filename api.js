@@ -108,7 +108,7 @@ module.exports.getAllExperience = async () => {
   };
   try{
     const result = await dynamoDb.get(params).promise();
-    const items = result.Items.map((item) => DynamoDB.Converter.unmarshall(item));
+    const items = result.Item.map((it) => DynamoDB.Converter.unmarshall(it));
     return{
       statusCode: 200,
       body: JSON.stringify(items),
