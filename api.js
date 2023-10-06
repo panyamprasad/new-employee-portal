@@ -108,7 +108,7 @@ module.exports.getAllExperience = async () => {
   };
   try{
     const result = await dynamoDb.get(params).promise();
-    const items = result.Item.map((item) => DynamoDB.Converter.unmarshall(item));
+    const items = result.Items.map((item) => DynamoDB.Converter.unmarshall(item));
     return{
       statusCode: 200,
       body: JSON.stringify(items),
@@ -121,3 +121,23 @@ module.exports.getAllExperience = async () => {
   }
 }
 
+// // Get All Experience Details
+// module.exports.getAllExperience = async () => {
+//   const params = {
+//     TableName: process.env.DYNAMODB_TABLE_NAME,
+//   };
+
+//   try {
+//     const result = await dynamoDb.scan(params).promise();
+//     const items = result.Items.map((item) => DynamoDB.Converter.unmarshall(item));
+//     return {
+//       statusCode: 200,
+//       body: JSON.stringify(items),
+//     };
+//   } catch (error) {
+//     return {
+//       statusCode: 500,
+//       body: JSON.stringify({ error: 'An error occurred while fetching all experience details' }),
+//     };
+//   }
+// };
