@@ -78,6 +78,29 @@ module.exports.updateExperience = async (event) => {
   }
 };
 
+//Get the Specific Employee Experience info
+module.exports.getExperience = async (event) => {
+  const employeeId = event.pathParameters.employeeId;
+  const params = {
+    TableName: process.env.DYNAMODB_TABLE_NAME,
+    Key:{
+      EmpId: employeeId
+    },    
+  };
+  try{
+    const result = await dynamoDb.get(params).promise();
+    return{
+      statusCode: 200,
+      body: JSON.stringify(result.Item),
+    };
+  }catch(error){
+    return{
+      statusCode: 500,
+      body: JSON.stringify({error: 'An error occurred while getting experience details...!'})
+    };
+  }
+}
+
 // Get Experience Details
 // module.exports.getExperience = async (event) => {
 //   const employeeId = event.pathParameters.employeeId;
