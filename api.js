@@ -77,7 +77,7 @@ module.exports.employeeDetails = async function (event) {
     };
 
     const { Item } = await client.send(new GetItemCommand(currentParams));
-    const initialValue = Item ? parseInt(Item.counter.N, 10)+ incrementValue : 1000;
+    const initialValue = Item ? parseInt(Item.counter.N, 10)+ incrementValue : 5;
     const updateParams = {
       TableName: process.env.EMPLOYEE_ID_TABLE,
       Key:{
