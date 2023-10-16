@@ -48,10 +48,9 @@ module.exports.employeeDetails = async function (event) {
       requestBody.empId = empId.toString();
       const params = {
         TableName: process.env.DYNAMODB_TABLE_NAME,
-        Item: requestBody
+        Item: requestBody,
       };
       await dynamoDb.put(params).promise();
-      console.log(params)
       return { 
         statusCode: 200, 
         body: JSON.stringify({ 
@@ -72,23 +71,23 @@ module.exports.employeeDetails = async function (event) {
     const params = {
       TableName: process.env.EMPLOYEE_ID_TABLE,
       Key: {
-        id: 'employeeCounter', // Remove the { S: ... } type annotation
+        id: 'employeeCounter',
       },
       UpdateExpression: 'SET #counter = if_not_exists(#counter, :initValue) + :incrValue',
       ExpressionAttributeNames: {
         '#counter': 'counter',
       },
       ExpressionAttributeValues: {
-        ':initValue': '1000', // Remove the { N: ... } type annotation
-        ':incrValue': '1', // Remove the { N: ... } type annotation
+        ':initValue': '1000',
+        ':incrValue': '1',
       },
       ReturnValues: 'UPDATED_NEW',
     };
-    
-  ​
-    const { Attributes } = await client.send(new UpdateItemCommand(params));
+  
+    const { Attributes } = await dynamoDb.update(params).promise();
     return Attributes.counter.N;
-  };
+  }
+  
 
   // async function getEmpId() {
   //   try {
