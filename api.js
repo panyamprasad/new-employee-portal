@@ -1,6 +1,7 @@
 const { GetItemCommand, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
 const { DynamoDB } = require("aws-sdk");
 const dynamoDb = new DynamoDB.DocumentClient();
+const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
 module.exports.employeeDetails = async function (event) {
   const httpMethod = event.httpMethod;
@@ -48,7 +49,7 @@ module.exports.employeeDetails = async function (event) {
       requestBody.empId = empId.toString();
       const params = {
         TableName: process.env.DYNAMODB_TABLE_NAME,
-        Item: requestBody,
+        Item: marshall(requestBody || {}),
       };
       await dynamoDb.put(params).promise();
       console.log(params)
