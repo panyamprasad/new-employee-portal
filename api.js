@@ -78,15 +78,16 @@ module.exports.employeeDetails = async function (event) {
         '#counter': 'counter',
       },
       ExpressionAttributeValues: {
-        ':initValue': '1000',
-        ':incrValue': '1',
+        ':initValue': 1000, // Use numeric type (without quotes)
+        ':incrValue': 1, // Use numeric type (without quotes)
       },
       ReturnValues: 'UPDATED_NEW',
     };
   
-    const { Attributes } = await dynamoDb.update(params).promise();
-    return Attributes.counter.N;
+    const result = await dynamoDb.update(params).promise();
+    return result.Attributes.counter;
   }
+  
   
 
   // async function getEmpId() {
