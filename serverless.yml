@@ -5,98 +5,65 @@ provider:
   stage: dev
   region: us-east-1
   environment:
-    DYNAMODB_TABLE_NAME: ${self:custom.employeeTableName}
+    DYNAMODB_TABLE_NAME: ${self:custom.employeeTable}
 custom:
-  employeeTableName: employee-table-${self:provider.stage}
+  employeeTable: new-employee-table-${self:provider.stage}
 plugins:
   - serverless-iam-roles-per-function
 functions:
     #Create Experience Details      
-  createPost:
-    handler: api.createExperience
-    name: create-post
+  empPortal:
+    handler: api.employeeDetails
+    name: create-api
     memorySize: 128
     timeout: 5
     events:
       - http:
-          path: experienceInfo
+          path: createEmpDetails
           method: POST
+          cors: true
+      - http:
+          path: updateEmpDetails
+          method: PUT
+          cors: true
+      - http:
+          path: getEmpDetails
+          method: GET
+          cors: true
+      - http:
+          path: getAllEmpDetails
+          method: GET
+          cors: true
+      - http:
+          path: deleteEmpDetails
+          method: DELETE
+          cors: true
+      - http:
+          path: softDeleteEmpDetails
+          method: DELETE
+          cors: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
           - "dynamodb:PutItem"
-        Resource:
-          Fn::GetAtt:
-            - PostsTable
-            - Arn
-
-    #Update Experience Details
-  updatePost:
-    handler: api.updateExperience
-    name: update-post
-    memorySize: 128 # mb
-    timeout: 5 # seconds
-    events:
-      - http:
-          path: experienceInfo/{employeeId}
-          method: PUT
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
           - "dynamodb:UpdateItem"
-        Resource:
-          Fn::GetAtt:
-            - PostsTable
-            - Arn
-
-  #Get Experience Details Based on EmpID
-  getPost:
-    handler: api.getExperience
-    name: get-post
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: employeeExperienceInfo/{employeeId}
-          method: GET
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
           - "dynamodb:GetItem"
-        Resource:
-          Fn::GetAtt:
-            - PostsTable
-            - Arn
-  
-  #Get All Experience Details Based on EmpID
-  getAllPost:
-    handler: api.getAllExperience
-    name: get-all-post
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: employeesExperienceInfo
-          method: GET
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
           - "dynamodb:Scan"
+          - "dynamodb:DeleteItem"
         Resource:
-          Fn::GetAtt:
-            - PostsTable
-            - Arn
+          - !GetAtt EmployeeTable.Arn
+
 resources:
   Resources:
-    PostsTable:
+    EmployeeTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.employeeTableName}
+        TableName: ${self:custom.employeeTable}
         AttributeDefinitions:
-          - AttributeName: EmpId
+          - AttributeName: empId
             AttributeType: S
         KeySchema:
-          - AttributeName: EmpId
+          - AttributeName: empId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
