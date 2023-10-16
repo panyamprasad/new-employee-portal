@@ -61,7 +61,7 @@ resources:
         TableName: ${self:custom.employeeTable}
         AttributeDefinitions:
           - AttributeName: empId
-            AttributeType: I
+            AttributeType: N
         KeySchema:
           - AttributeName: empId
             KeyType: HASH
