@@ -71,7 +71,7 @@ module.exports.employeeDetails = async function (event) {
     const params = {
       TableName: process.env.EMPLOYEE_ID_TABLE,
       Key: {
-        id: 'employeeCounter',
+        id: 'empId',
       },
       UpdateExpression: 'SET #counter = if_not_exists(#counter, :initValue) + :incrValue',
       ExpressionAttributeNames: {
