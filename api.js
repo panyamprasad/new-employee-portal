@@ -72,7 +72,7 @@ module.exports.employeeDetails = async function (event) {
     const currentParams = {
       TableName: process.env.EMPLOYEE_ID_TABLE,
       Key: {
-        id: { S: keyId },
+        id: { S: 'employeeCounter' },
       },
     };
 
@@ -81,7 +81,7 @@ module.exports.employeeDetails = async function (event) {
     const updateParams = {
       TableName: process.env.EMPLOYEE_ID_TABLE,
       Key:{
-        id: { S:keyId},
+        id: { S: 'employeeCounter'},
       },
       UpdateExpression: 'SET #counter = :newValue',
       ExpressionAttributeNames:{
