@@ -56,6 +56,7 @@ module.exports.employeeDetails = async function (event) {
         Item: requestBody,
       };
       await dynamoDb.put(params).promise();
+      console.log(params)
       return {
         statusCode: 200,
         body: JSON.stringify({
