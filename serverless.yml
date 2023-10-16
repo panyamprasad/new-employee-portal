@@ -54,6 +54,7 @@ functions:
           - "dynamodb:DeleteItem"
         Resource:
           - !GetAtt EmployeeTable.Arn
+          - !GetAtt EmployeeIdTable.Arn
 
 resources:
   Resources:
