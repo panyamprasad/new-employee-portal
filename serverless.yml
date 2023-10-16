@@ -14,7 +14,7 @@ functions:
     #Create Experience Details      
   empPortal:
     handler: api.employeeDetails
-    name: create-api
+    name: api
     memorySize: 128
     timeout: 5
     events:
