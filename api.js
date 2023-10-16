@@ -62,44 +62,65 @@ module.exports.employeeDetails = async function (event) {
       return {
         statusCode: 500,
         body: JSON.stringify({
-          message: error,
+          message: error.message,
         }),
       };
     }
   }
 
   async function getEmpId() {
-    try {
-      const currentParams = {
-        TableName: process.env.EMPLOYEE_ID_TABLE,
-        Key: {
-          id: { S: 'employeeCounter' },
-        },
-      };
-      const { Item } = await dynamoDb.get(currentParams).promise();
-      const initialValue = Item ? parseInt(Item.counter.N, 10) + incrementValue : 5;
+    const params = {
+      TableName: process.env.EMPLOYEE_ID_TABLE,
+      Key: {
+        id: { S: 'employeeCounter' },
+      },
+      UpdateExpression: 'SET #counter = if_not_exists(#counter, :initValue) + :incrValue',
+      ExpressionAttributeNames: {
+        '#counter': 'counter',
+      },
+      ExpressionAttributeValues: {
+        ':initValue': { N: '1000' }, // Initialize the counter if it doesn't exist (change this as needed)
+        ':incrValue': { N: '1' }, // Increment the counter by 1
+      },
+      ReturnValues: 'UPDATED_NEW',
+    };
+  ​
+    const { Attributes } = await client.send(new UpdateItemCommand(params));
+    return Attributes.counter.N;
+  };
+
+  // async function getEmpId() {
+  //   try {
+  //     const currentParams = {
+  //       TableName: process.env.EMPLOYEE_ID_TABLE,
+  //       Key: {
+  //         id: { S: 'employeeCounter' },
+  //       },
+  //     };
+  //     const { Item } = await dynamoDb.get(currentParams).promise();
+  //     const initialValue = Item ? parseInt(Item.counter.N, 10) + incrementValue : 5;
   
-      const updateParams = {
-        TableName: process.env.EMPLOYEE_ID_TABLE,
-        Key: {
-          id: { S: 'employeeCounter' },
-        },
-        UpdateExpression: 'SET #counter = :newValue',
-        ExpressionAttributeNames: {
-          '#counter': 'counter',
-        },
-        ExpressionAttributeValues: {
-          ':newValue': { N: initialValue.toString() },
-        },
-        ReturnValues: 'UPDATED_NEW',
-      };
+  //     const updateParams = {
+  //       TableName: process.env.EMPLOYEE_ID_TABLE,
+  //       Key: {
+  //         id: { S: 'employeeCounter' },
+  //       },
+  //       UpdateExpression: 'SET #counter = :newValue',
+  //       ExpressionAttributeNames: {
+  //         '#counter': 'counter',
+  //       },
+  //       ExpressionAttributeValues: {
+  //         ':newValue': { N: initialValue.toString() },
+  //       },
+  //       ReturnValues: 'UPDATED_NEW',
+  //     };
   
-      const { Attributes } = await dynamoDb.update(updateParams).promise();
-      return Attributes.counter.N;
-    } catch (error) {
-      console.error('Error in getEmpId:', error);
-      throw new Error('Failed to get or update employee ID');
-    }
-  }
+  //     const { Attributes } = await dynamoDb.update(updateParams).promise();
+  //     return Attributes.counter.N;
+  //   } catch (error) {
+  //     console.error('Error in getEmpId:', error);
+  //     throw new Error('Failed to get or update employee ID');
+  //   }
+  // }
   
 };
