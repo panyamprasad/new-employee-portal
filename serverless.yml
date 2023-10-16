@@ -6,8 +6,10 @@ provider:
   region: us-east-1
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.employeeTable}
+    EMPLOYEE_ID_TABLE: ${self:custom.employeeIdTable}
 custom:
   employeeTable: new-employee-table-${self:provider.stage}
+  employeeIdTable: emp-id-table-${self:provider.stage}
 plugins:
   - serverless-iam-roles-per-function
 functions:
@@ -61,9 +63,22 @@ resources:
         TableName: ${self:custom.employeeTable}
         AttributeDefinitions:
           - AttributeName: empId
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           - AttributeName: empId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    EmployeeIdTable:
+      Type: AWS::DynamoDB::Table # Define a new DynamoDB table for the serial number
+      Properties:
+        TableName: ${self:custom.employeeIdTable}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
