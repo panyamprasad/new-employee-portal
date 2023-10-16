@@ -63,7 +63,7 @@ module.exports.employeeDetails = async function (event) {
         statusCode: 500,
         body: JSON.stringify({
           message: error.message,
-        }),
+        })
       };
     }
   }
