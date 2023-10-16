@@ -52,12 +52,12 @@ module.exports.employeeDetails = async function (event) {
       };
       await dynamoDb.put(params).promise();
       console.log(params)
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          message: "Employee info added successfully...!",
-        }),
-      };
+      return { 
+        statusCode: 200, 
+        body: JSON.stringify({ 
+          message: "Employee info added successfully...!", 
+        }) 
+      };      
     } catch (error) {
       return {
         statusCode: 500,
@@ -72,18 +72,19 @@ module.exports.employeeDetails = async function (event) {
     const params = {
       TableName: process.env.EMPLOYEE_ID_TABLE,
       Key: {
-        id: { S: 'employeeCounter' },
+        id: 'employeeCounter', // Remove the { S: ... } type annotation
       },
       UpdateExpression: 'SET #counter = if_not_exists(#counter, :initValue) + :incrValue',
       ExpressionAttributeNames: {
         '#counter': 'counter',
       },
       ExpressionAttributeValues: {
-        ':initValue': { N: '1000' }, // Initialize the counter if it doesn't exist (change this as needed)
-        ':incrValue': { N: '1' }, // Increment the counter by 1
+        ':initValue': '1000', // Remove the { N: ... } type annotation
+        ':incrValue': '1', // Remove the { N: ... } type annotation
       },
       ReturnValues: 'UPDATED_NEW',
     };
+    
   ​
     const { Attributes } = await client.send(new UpdateItemCommand(params));
     return Attributes.counter.N;
