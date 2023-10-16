@@ -69,31 +69,38 @@ module.exports.employeeDetails = async function (event) {
     }
   }
 
-  async function getEmpId(){
-    const currentParams = {
-      TableName: process.env.EMPLOYEE_ID_TABLE,
-      Key: {
-        id: { S: 'employeeCounter' },
-      },
-    };
-
-    const { Item } = await client.send(new GetItemCommand(currentParams));
-    const initialValue = Item ? parseInt(Item.counter.N, 10)+ incrementValue : 5;
-    const updateParams = {
-      TableName: process.env.EMPLOYEE_ID_TABLE,
-      Key:{
-        id: { S: 'employeeCounter'},
-      },
-      UpdateExpression: 'SET #counter = :newValue',
-      ExpressionAttributeNames:{
-        '#counter':'counter',
-      },
-      ExpressionAttributeValues:{
-        ':newValue': { N: initialValue.toString()},
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    const { Attributes } = await client.send(new UpdateItemCommand(updateParams));
-    return Attributes.counter.N;
+  async function getEmpId() {
+    try {
+      const currentParams = {
+        TableName: process.env.EMPLOYEE_ID_TABLE,
+        Key: {
+          id: { S: 'employeeCounter' },
+        },
+      };
+      const { Item } = await dynamoDb.get(currentParams).promise();
+      const initialValue = Item ? parseInt(Item.counter.N, 10) + incrementValue : 5;
+  
+      const updateParams = {
+        TableName: process.env.EMPLOYEE_ID_TABLE,
+        Key: {
+          id: { S: 'employeeCounter' },
+        },
+        UpdateExpression: 'SET #counter = :newValue',
+        ExpressionAttributeNames: {
+          '#counter': 'counter',
+        },
+        ExpressionAttributeValues: {
+          ':newValue': { N: initialValue.toString() },
+        },
+        ReturnValues: 'UPDATED_NEW',
+      };
+  
+      const { Attributes } = await dynamoDb.update(updateParams).promise();
+      return Attributes.counter.N;
+    } catch (error) {
+      console.error('Error in getEmpId:', error);
+      throw new Error('Failed to get or update employee ID');
+    }
   }
+  
 };
