@@ -91,6 +91,7 @@ module.exports.employeeDetails = async function (event) {
   }
 
   //Update Record
+
   async function updateEmpDetails(event) {
     console.log(event);
     try {
@@ -171,7 +172,7 @@ module.exports.employeeExperience = async function (event) {
   }
 
   //Save Record
-  async function saveExperienceInfo(event) {g
+  async function saveExperienceInfo(event) {
     console.log(event)
     try {
       const requestBody = JSON.parse(event.body);
