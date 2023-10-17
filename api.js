@@ -91,7 +91,6 @@ module.exports.employeeDetails = async function (event) {
   }
 
   //Update Record
-
   async function updateEmpDetails(event) {
     console.log(event);
     try {
@@ -131,38 +130,258 @@ module.exports.employeeDetails = async function (event) {
       };
     }
   }
+};
 
-  // async function getEmpId() {
-  //   try {
-  //     const currentParams = {
-  //       TableName: process.env.EMPLOYEE_ID_TABLE,
-  //       Key: {
-  //         id: { S: 'employeeCounter' },
-  //       },
-  //     };
-  //     const { Item } = await dynamoDb.get(currentParams).promise();
-  //     const initialValue = Item ? parseInt(Item.counter.N, 10) + incrementValue : 5;
+module.exports.employeeExperience = async function (event) {
+  
+  const httpMethod = event.httpMethod;
+  switch (httpMethod) {
+    case "POST":
+      return saveExperienceInfo(event);
+    case "PUT":
+      return updateExperience(event);
+    case "GET":
+      if (event.pathParameters && event.pathParameters.employeeId) {
+        return getEmployeeExperience(event);
+      } else {
+        return getAllEmployeesExperience(event);
+      }
+    case "DELETE":
+      if (event.pathParameters && event.pathParameters.employeeId) {
+        if (event.resource === "/deleteExperienceInfo/{employeeId}") {
+          return hardDeleteEmployeeExperience(event);
+        } else if (
+          event.resource === "/softDeleteExperienceInfo/{employeeId}"
+        ) {
+          return softDeleteEmployeeExperience(event);
+        }
+      } else {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: "EmployeeId missing in delete request...!",
+          }),
+        };
+      }
+    default:
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ message: "Method not allowed" }),
+      };
+  }
 
-  //     const updateParams = {
-  //       TableName: process.env.EMPLOYEE_ID_TABLE,
-  //       Key: {
-  //         id: { S: 'employeeCounter' },
-  //       },
-  //       UpdateExpression: 'SET #counter = :newValue',
-  //       ExpressionAttributeNames: {
-  //         '#counter': 'counter',
-  //       },
-  //       ExpressionAttributeValues: {
-  //         ':newValue': { N: initialValue.toString() },
-  //       },
-  //       ReturnValues: 'UPDATED_NEW',
-  //     };
+  //Save Record
+  async function saveExperienceInfo(event) {g
+    console.log(event)
+    try {
+      const requestBody = JSON.parse(event.body);
 
-  //     const { Attributes } = await dynamoDb.update(updateParams).promise();
-  //     return Attributes.counter.N;
-  //   } catch (error) {
-  //     console.error('Error in getEmpId:', error);
-  //     throw new Error('Failed to get or update employee ID');
-  //   }
-  // }
+      // Validate StartDate and EndDate
+      if (new Date(requestBody.startDate) >= new Date(requestBody.endDate)) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "EndDate must be after StartDate" }),
+        };
+      }
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+        Item: requestBody,
+      };
+      await dynamoDb.put(params).promise();
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "Experience info added successfully...!",
+        }),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Internal Server Error...!",
+        }),
+      };
+    }
+  }
+
+  //Update Record
+  async function updateExperience(event) {
+    console.log(event)
+    try {
+      const employeeId = event.pathParameters.employeeId;
+      const requestBody = JSON.parse(event.body);
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+        Key: {
+          empId: employeeId,
+        },
+        UpdateExpression:
+          "SET Experience_Info.companyName = :companyName, Experience_Info.companyLocation = :companyLocation," +
+          "Experience_Info.startDate = :startDate, Experience_Info.endDate = :endDate, Experience_Info.performedRole = :performedRole," +
+          "Experience_Info.responsibilities = :responsibilities, Experience_Info.technologiesWorked = :technologiesWorked," +
+          "Experience_Info.isActive = :isActive",
+        ExpressionAttributeValues: {
+          ":companyName": requestBody.Experience_Info.companyName,
+          ":companyLocation": requestBody.Experience_Info.companyLocation,
+          ":startDate": requestBody.Experience_Info.startDate,
+          ":endDate": requestBody.Experience_Info.endDate,
+          ":performedRole": requestBody.Experience_Info.performedRole,
+          ":responsibilities": requestBody.Experience_Info.responsibilities,
+          ":technologiesWorked": requestBody.Experience_Info.technologiesWorked,
+          ":isActive": requestBody.Experience_Info.isActive,
+        },
+      };
+      await dynamoDb.update(params).promise();
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "Record Updated Successfully...!",
+        }),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: error.message,
+        }),
+      };
+    }
+  }
+
+  //Get Record
+  async function getEmployeeExperience(event) {
+    console.log(event)
+    try {
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+        Key: {
+          empId: event.pathParameters.employeeId,
+        },
+      };
+      const result = await dynamoDb.get(params).promise();
+      if (!result.Item) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: `${employeeId} record not found...!`,
+          }),
+        };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(result.Item),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: error.message,
+        }),
+      };
+    }
+  }
+
+  //Get All Records
+  async function getAllEmployeesExperience(event) {
+    console.log(event)
+    try {
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+      };
+      const result = await dynamoDb.scan(params).promise();
+      if (!result.Items || result.Items.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: "No records found...!" }),
+        };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(result.Items),
+      };
+    } catch (error) {
+      console.error("Error fetching all employees experience:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: error.message }),
+      };
+    }
+  }
+
+  //Delete Record
+  async function hardDeleteEmployeeExperience(event) {
+    console.log(event)
+    try {
+      const employeeId = event.pathParameters.employeeId;
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+        Key: {
+          empId: employeeId,
+        },
+      };
+      const result = await dynamoDb.delete(params).promise();
+      if (!result.Item) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: `${employeeId} record not found...!`,
+          }),
+        };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: `${employeeId} Record deleted successfully...!`,
+        }),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: error.message,
+        }),
+      };
+    }
+  }
+
+  //Soft Delete Record
+  async function softDeleteEmployeeExperience(event) {
+    console.log(event)
+    try {
+      const employeeId = event.pathParameters.employeeId;
+      const requestBody = JSON.parse(event.body);
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+        Key: {
+          empId: employeeId,
+        },
+        UpdateExpression: "SET Experience_Info.isActive = :isActive",
+        ExpressionAttributeValues: {
+          ":isActive": requestBody.Experience_Info.isActive,
+        },
+      };
+      const result = await dynamoDb.update(params).promise();
+      if (!result.Item) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: `${employeeId} is not available...`,
+          }),
+        };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "Record soft deleted Successfully...!",
+        }),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: error.message,
+        }),
+      };
+    }
+  }
 };
